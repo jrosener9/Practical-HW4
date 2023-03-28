@@ -1,4 +1,4 @@
-# Practical Homework 2: Algorand Election dApp
+# Practical Homework 4: Algorand Election dApp
 
 In this homework you will build an election dApp (decentralized app), creating a smart contract on the Algorand network and a webapp frontend.
 
@@ -43,6 +43,12 @@ Storage can be either global or local. Global storage is data that is specifical
 - Reading and writing to application global state with `App.globalPut`, `App.globalGet`, `App.globalDel`.
 - Reading and writing to account local state with `App.localPut`, `App.localGet`, `App.localDel`.
 - Refer to this link for more specific syntax details: https://pyteal.readthedocs.io/en/stable/state.html
+
+### Additional resources 
+During Fabrice's talk this semester, he talked about Beaker (Algorand' new framework for smart contract development). However, due to some issues in migrating this HW from PyTeal to Beaker we decided not to use Beaker with this HW. To help you become more familiar with PyTeal, please see these resources from last year's version of the class:
+- [Algorand Smart Contracts Using PyTeal Slide Deck](https://drive.google.com/file/d/1Kvo5jpy2rdKaTxHp6r3iP38oRCVujv5E/view?usp=sharing)
+- [Fabrice's PyTeal Lecture Recording 1](https://upenn.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=ef801234-3571-453f-a026-ae37001fd5f7)
+- [Fabrice's PyTeal Lecture Recording 2](https://upenn.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=ea97aedc-eccd-4efb-a5fa-ae45002752bd)
 
 
 ## Step 0 - Setup
