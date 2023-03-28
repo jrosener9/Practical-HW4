@@ -91,10 +91,16 @@ Note that if you successfully finished Practical Homework 1, your two accounts m
 Install the PyTeal library, `pyteal`, by typing this into your terminal:
 
 ```bash
-python3 -m pip install pyteal
+python3 -m pip install pyteal==0.14.0
 ```
 
 If you are using Windows, you may need to replace `python3` by `python` everywhere.
+
+Because the repo and the hw code is a bit old, we also need to install an older version of the algorand-sdk
+
+```bash
+python3 -m pip install py-algorand-sdk==1.15.0
+```
 
 ### Step 0.5 - Install Node.js and set up environment
 
