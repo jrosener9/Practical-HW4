@@ -100,6 +100,7 @@ Install the AlgoSDK, `py-algorand-sdk`, by typing this into your terminal:
 ```bash
 pip install py-algorand-sdk==1.15.0
 ```
+Note we are specifying versions here because the current hw code requires the use of a slightly out of date sdk version.
 
 If you are using Windows, you may need to replace `python3` by `python` everywhere.
 
