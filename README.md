@@ -47,8 +47,9 @@ Storage can be either global or local. Global storage is data that is specifical
 ### Additional resources 
 During Fabrice's talk this semester, he talked about Beaker (Algorand's new framework for smart contract development). However, due to some issues in migrating this HW from PyTeal to Beaker we decided not to use Beaker with this HW. To help you become more familiar with PyTeal, please see these resources from last year's version of the class:
 - [Algorand Smart Contracts Using PyTeal Slide Deck](https://drive.google.com/file/d/1Kvo5jpy2rdKaTxHp6r3iP38oRCVujv5E/view?usp=sharing)
-- [Fabrice's PyTeal Lecture Recording 1](https://upenn.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=ef801234-3571-453f-a026-ae37001fd5f7)
-- [Fabrice's PyTeal Lecture Recording 2](https://upenn.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=ea97aedc-eccd-4efb-a5fa-ae45002752bd)
+- [Fabrice's PyTeal Lecture Recording 1](https://drive.google.com/file/d/1s_-U3br10AatppsPgCUjQYt5Xjgn03Nx/view?usp=sharing)
+- Fabrice's PyTeal Lecture Recording 2 (will be updated soon, stay tuned)
+
 
 As a note, all instructions below are with respect to PyTeal and not Beaker. If you have any questions regarding PyTeal vs Beaker, please feel free to reach out to TAs. 
 
