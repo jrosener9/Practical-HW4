@@ -45,11 +45,12 @@ Storage can be either global or local. Global storage is data that is specifical
 - Refer to this link for more specific syntax details: https://pyteal.readthedocs.io/en/stable/state.html
 
 ### Additional resources 
-During Fabrice's talk this semester, he talked about Beaker (Algorand' new framework for smart contract development). However, due to some issues in migrating this HW from PyTeal to Beaker we decided not to use Beaker with this HW. To help you become more familiar with PyTeal, please see these resources from last year's version of the class:
+During Fabrice's talk this semester, he talked about Beaker (Algorand's new framework for smart contract development). However, due to some issues in migrating this HW from PyTeal to Beaker we decided not to use Beaker with this HW. To help you become more familiar with PyTeal, please see these resources from last year's version of the class:
 - [Algorand Smart Contracts Using PyTeal Slide Deck](https://drive.google.com/file/d/1Kvo5jpy2rdKaTxHp6r3iP38oRCVujv5E/view?usp=sharing)
 - [Fabrice's PyTeal Lecture Recording 1](https://upenn.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=ef801234-3571-453f-a026-ae37001fd5f7)
 - [Fabrice's PyTeal Lecture Recording 2](https://upenn.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=ea97aedc-eccd-4efb-a5fa-ae45002752bd)
 
+As a note, all instructions below are with respect to PyTeal and not Beaker. If you have any questions regarding PyTeal vs Beaker, please feel free to reach out to TAs. 
 
 ## Step 0 - Setup
 
@@ -91,16 +92,10 @@ Note that if you successfully finished Practical Homework 1, your two accounts m
 Install the PyTeal library, `pyteal`, by typing this into your terminal:
 
 ```bash
-python3 -m pip install pyteal==0.14.0
+python3 -m pip install pyteal
 ```
 
 If you are using Windows, you may need to replace `python3` by `python` everywhere.
-
-Because the repo and the hw code is a bit old, we also need to install an older version of the algorand-sdk
-
-```bash
-python3 -m pip install py-algorand-sdk==1.15.0
-```
 
 ### Step 0.5 - Install Node.js and set up environment
 
@@ -477,3 +472,21 @@ Components:
 We highly recommend taking a look at the files themselves, so that you have a good sense of how the frontend works!
 
 You can try running the app in your Chrome browser by running `npm start` in the `frontend` folder. 
+
+# FAQs
+1. Mac users may face this issue when running deploy.py:
+```
+urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:992)>
+```
+To solve this navigate to your `Applications/Python 3.x/` folder and double click the `Install Certificates.command.`
+
+2. If you have trouble using or setting up React, ensure that your version of React matches or is greater than the one mentioned in `package.json`. If the issue stil persists remove the following code from `package.json`
+```
+"eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  }
+```
+and run `npm install` again.
