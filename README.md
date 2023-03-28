@@ -87,15 +87,23 @@ In the same way as Practical Homework 1, in order to use your accounts they need
 
 Note that if you successfully finished Practical Homework 1, your two accounts must already have Algos in it and you can skip those tests.
 
-### Step 0.4 - Install PyTeal
+### Step 0.4 - Install PyTeal and AlgoSDK
 
 Install the PyTeal library, `pyteal`, by typing this into your terminal:
 
 ```bash
-python3 -m pip install pyteal
+python3 -m pip install pyteal==0.14.0
+```
+
+Install the AlgoSDK, `py-algorand-sdk`, by typing this into your terminal:
+
+```bash
+pip install py-algorand-sdk==1.15.0
 ```
 
 If you are using Windows, you may need to replace `python3` by `python` everywhere.
+
+If you run into issues or need more clarification regarding Python installation and/or version management, please refer to [Intel's Ed post](https://edstem.org/us/courses/35448/discussion/2440264) from HW1.
 
 ### Step 0.5 - Install Node.js and set up environment
 
