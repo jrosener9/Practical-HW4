@@ -15,12 +15,17 @@ def approval_program():
             # consider storing all of them as a string separated by commas e.g: "A,B,C,D".
             # Note that index-wise, A=0, B=1, C=2, D=3
             # Set all initial vote tallies to 0 for all vote options, keys are the vote options
+            Assert(Txn.application_args.length() == Int(3)),
+            App.globalPut(Bytes("ElectionEnd"), Btoi(Txn.application_args[0])),
+            App.globalPut(Bytes("NumVoteOptions"), Btoi(Txn.application_args[1])),
+            App.globalPut(Bytes("VoteOptions"), Txn.application_args[2]),
+
             For(
-
+                i.store(Int(0)), i.load() < App.globalGet(Bytes('NumVoteOptions')), i.store(i.load() + Int(1)) 
             ).Do(
-
+                App.globalPut(Concat(Bytes("VotesFor"), itoa(i.load())), Int(0))
             ),
-
+            
             Return(Int(1)),
         ]
     )
@@ -40,26 +45,60 @@ def approval_program():
     on_closeout = Seq(
         # TODO: CLOSE OUT:
         [
-
+        get_vote_of_sender,
+         If(
+            And(Global.round() <= App.globalGet(Bytes("ElectionEnd")), get_vote_of_sender.hasValue()),
+            App.globalPut(
+                    Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value())),
+                    App.globalGet(Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value()))) - Int(1),
+                ),
+            ),
             Return(Int(1))
         ]
     )
 
     on_register = Seq(
-        # TODO: REGISTRATION:
+        [If(
+            Global.round() <= App.globalGet(Bytes("ElectionEnd")), 
+            App.localPut(Int(0), Bytes("can_vote"), Bytes('maybe'))), 
         Return(Int(1))
+        ]
     )
 
     on_update_user_status = Seq(
         # TODO: UPDATE USER LOGIC
-        Return(Int(1))
+
+        [   
+            Assert(is_creator), 
+            Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
+            #Assert(App.localGetEx(Txn.application_args[1], App.id(), Bytes("can_vote")).hasValue()),
+            App.localPut(Txn.application_args[1], Bytes('can_vote'), Txn.application_args[2]),
+            Return(Int(1))
+        ]
     )
 
     choice = Btoi(Txn.application_args[1])
     on_vote = Seq(
         # TODO: USER VOTING LOGIC:
         [
-
+            get_vote_of_sender,
+            get_sender_can_vote,
+            Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
+            Assert(get_sender_can_vote.value() == Bytes('yes')),
+            Assert(And(
+                        choice < App.globalGet(Bytes("NumVoteOptions")), 
+                        choice >= Int(0)
+                    )
+            ),
+            If(get_vote_of_sender.hasValue(), 
+               Return(Int(0)), 
+               Seq(
+                App.localPut(Int(0), Bytes('voted'), choice), 
+                App.globalPut(
+                    Concat(Bytes("VotesFor"), itoa(choice)),
+                    App.globalGet(Concat(Bytes("VotesFor"), itoa(choice))) + Int(1),
+                )
+               )),
             Return(Int(1))
         ]
     )
@@ -73,6 +112,9 @@ def approval_program():
         [Txn.on_completion() == OnComplete.UpdateApplication, Return(is_creator)],
         [Txn.on_completion() == OnComplete.CloseOut, on_closeout],
         [Txn.on_completion() == OnComplete.OptIn, on_register],
+        [Txn.application_args[0] == Bytes("vote"), on_vote], 
+        [Txn.application_args[0] == Bytes("update_user_status"), on_update_user_status]
+
 
         # TODO: Complete the cases that will trigger the update_user_status and on_vote sequences
 
