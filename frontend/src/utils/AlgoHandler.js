@@ -39,21 +39,17 @@ class AlgoHandler {
     // This variable will be returned after populated
     let accounts = [];
 
-
-
-    // Attempt to connect to AlgoSigner, note you will have to use the "await" keyword
-    // If this fails or an error occurs, return an empty array
-    // TODO -----------------------------------------------------------------------------
-    let algosigner = await window.algorand.enable({
-      genesisID: 'testnet-v1.0',
-      genesisHash: 'SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
-    });
-
-
     // Retrieve all the AlgoSigner accounts on the TestNet
     // Note they may be in this format: [{address: "address1"}, {address: "address2"}, etc]
     // TODO -----------------------------------------------------------------------------
-    accounts = algosigner.accounts;
+    await window.AlgoSigner.connect();
+
+    let accountsData = await window.AlgoSigner.accounts({ledger: 'TestNet'});
+    
+    for (let account of accountsData) {
+      accounts.push(account['address']);
+    }
+
 
 
     // Return the addresses in array format: ["address1", "address2", "address3", etc]
@@ -231,21 +227,23 @@ class AlgoHandler {
     // TODO -----------------------------------------------------------------------------
 
     let binaryTxn = txn.toByte();
-    let base64Txn = window.algorand.encoding.msgpackToBase64(binaryTxn);
+    let base64Txn = window.AlgoSigner.encoding.msgpackToBase64(binaryTxn);
 
     // Sign the transaction with AlgoSigner
     // TODO -----------------------------------------------------------------------------
-    let signedTxn = await window.algorand.signTxns([
+    let signedTxn = await window.AlgoSigner.signTxn([
       {
         txn: base64Txn,
       },
     ]);
 
-
     // Send the message with AlgoSigner
     // TODO -----------------------------------------------------------------------------
 
-    let sentTransaction = await window.algorand.postTxns(signedTxn);
+    let sentTransaction = await window.AlgoSigner.send({
+                                            ledger: 'TestNet',
+                                            tx: signedTxn[0].blob,
+                                          });
 
     console.log(sentTransaction);
   }
