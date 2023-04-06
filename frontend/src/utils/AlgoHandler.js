@@ -28,8 +28,6 @@ class AlgoHandler {
     // Setup the indexer client using the secrets imported variable
     // TODO -----------------------------------------------------------------------------
     this.indexerClient = new algosdk.Indexer(secrets.algodHeader, secrets.indexerServer, '');
-
-    this.algosigner = null;
   }
 
   /**
@@ -46,19 +44,16 @@ class AlgoHandler {
     // Attempt to connect to AlgoSigner, note you will have to use the "await" keyword
     // If this fails or an error occurs, return an empty array
     // TODO -----------------------------------------------------------------------------
-    this.algosigner = await window.algorand.enable({
+    let algosigner = await window.algorand.enable({
       genesisID: 'testnet-v1.0',
       genesisHash: 'SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
     });
-    console.log(this.algosigner);
 
 
     // Retrieve all the AlgoSigner accounts on the TestNet
     // Note they may be in this format: [{address: "address1"}, {address: "address2"}, etc]
     // TODO -----------------------------------------------------------------------------
-    accounts = this.algosigner.accounts;
-    console.log('accounts')
-    console.log(accounts)
+    accounts = algosigner.accounts;
 
 
     // Return the addresses in array format: ["address1", "address2", "address3", etc]
@@ -222,9 +217,6 @@ class AlgoHandler {
     // TODO -----------------------------------------------------------------------------
 
     // Return your JavaScript object
-    console.log('Local state');
-    console.log('here')
-    console.log(allLocalStates);
 
     return allLocalStates;
   }
@@ -241,7 +233,6 @@ class AlgoHandler {
     let binaryTxn = txn.toByte();
     let base64Txn = window.algorand.encoding.msgpackToBase64(binaryTxn);
 
-    console.log('Here')
     // Sign the transaction with AlgoSigner
     // TODO -----------------------------------------------------------------------------
     let signedTxn = await window.algorand.signTxns([
@@ -250,13 +241,13 @@ class AlgoHandler {
       },
     ]);
 
-    console.log('Signed transaction')
-    console.log(signedTxn);
 
     // Send the message with AlgoSigner
     // TODO -----------------------------------------------------------------------------
 
-    await window.algorand.postTxns(signedTxn);
+    let sentTransaction = await window.algorand.postTxns(signedTxn);
+
+    console.log(sentTransaction);
   }
 
   /** 
@@ -270,18 +261,10 @@ class AlgoHandler {
     // TODO -----------------------------------------------------------------------------
     let suggestedParams = await this.algodClient.getTransactionParams().do();
 
-    console.log('Algosigner')
-    console.log(this.algosigner);
-
-    console.log('address')
-    console.log(address)
-
     // Create the transaction to opt in
     // TODO -----------------------------------------------------------------------------
       // Use the JS SDK to build a Transaction
     let optInTransaction = new algosdk.makeApplicationOptInTxn(address, suggestedParams, appID);
-
-    console.log(optInTransaction._getDictForDisplay());
 
     // Sign and send the transaction with our this.signAndSend function
     // TODO -----------------------------------------------------------------------------
@@ -309,8 +292,11 @@ class AlgoHandler {
     // The first argument should be the identifier of the smart contract method.
     // In this case the identifier is "update_user_status"
     // TODO -----------------------------------------------------------------------------
+    let param1 = new TextEncoder().encode("update_user_status");
+    let param3 = new TextEncoder().encode(yesOrNo);
     
-    let app_args = [algosdk.encodeObj('update_user_status'), algosdk.decodeAddress(userAddress), algosdk.encodeObj(yesOrNo)];
+    //let app_args = [algosdk.encodeObj('update_user_status'), algosdk.decodeAddress(userAddress).publicKey, algosdk.encodeObj(yesOrNo)];
+    let app_args = [param1, algosdk.decodeAddress(userAddress).publicKey, param3];
 
     // Create the transaction with proper app argument array
     // For this application transaction make sure to include the optional array of accounts 
@@ -337,7 +323,8 @@ class AlgoHandler {
     // TODO -----------------------------------------------------------------------------
     let suggestedParams = await this.algodClient.getTransactionParams().do();
 
-    let app_args = [algosdk.encodeObj('vote'), algosdk.encodeUint64(optionIndex)];
+    let param1 = new TextEncoder().encode("vote");
+    let app_args = [param1, algosdk.encodeUint64(optionIndex)];
 
     let txn = algosdk.makeApplicationNoOpTxn(address, suggestedParams, appID, app_args);
 
