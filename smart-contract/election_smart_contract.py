@@ -36,6 +36,8 @@ def approval_program():
     # value of whether or not the sender can vote ("yes", "no", or "maybe")
     get_sender_can_vote = App.localGetEx(Int(0), App.id(), Bytes("can_vote"))
 
+    get_user_can_vote = App.localGetEx(Txn.application_args[1], App.id(), Bytes("can_vote"))
+
     # get_vote_sender is a value that the sender voted for,
     #   a number indicating the index in the VoteOptions string faux-array.
     # Remember that since we stored the election's voting options as a string separated by commas (such as "A,B,C,D"),
@@ -46,21 +48,21 @@ def approval_program():
         # TODO: CLOSE OUT:
         [
         get_vote_of_sender,
-         If(
-            And(Global.round() <= App.globalGet(Bytes("ElectionEnd")), get_vote_of_sender.hasValue()),
-            App.globalPut(
+        Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
+        Assert(get_vote_of_sender.hasValue()), 
+        App.globalPut(
                     Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value())),
                     App.globalGet(Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value()))) - Int(1),
-                ),
-            ),
-            Return(Int(1))
+        ),
+        Return(Int(1))
         ]
     )
 
     on_register = Seq(
-        [If(
-            Global.round() <= App.globalGet(Bytes("ElectionEnd")), 
-            App.localPut(Int(0), Bytes("can_vote"), Bytes('maybe'))), 
+        
+        [
+        Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
+        App.localPut(Int(0), Bytes("can_vote"), Bytes('maybe')),
         Return(Int(1))
         ]
     )
@@ -69,8 +71,10 @@ def approval_program():
         # TODO: UPDATE USER LOGIC
 
         [   
+            get_user_can_vote, 
             Assert(is_creator), 
             Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
+            Assert(get_user_can_vote.value() == Bytes('maybe')),
             App.localPut(Txn.application_args[1], Bytes('can_vote'), Txn.application_args[2]),
             Return(Int(1))
         ]
@@ -84,20 +88,19 @@ def approval_program():
             get_sender_can_vote,
             Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
             Assert(get_sender_can_vote.value() == Bytes('yes')),
+            Assert(get_vote_of_sender.hasValue() == Int(0)), 
             Assert(And(
                         choice < App.globalGet(Bytes("NumVoteOptions")), 
                         choice >= Int(0)
                     )
             ),
-            If(get_vote_of_sender.hasValue(), 
-               Return(Int(0)), 
-               Seq(
+            Seq(
                 App.localPut(Int(0), Bytes('voted'), choice), 
                 App.globalPut(
                     Concat(Bytes("VotesFor"), itoa(choice)),
                     App.globalGet(Concat(Bytes("VotesFor"), itoa(choice))) + Int(1),
                 )
-               )),
+            ), 
             Return(Int(1))
         ]
     )
@@ -131,9 +134,17 @@ def clear_state_program():
 
     program = Seq(
         # remove their vote from the correct vote tally
-        [
-
-            Return(Int(1))
+       [
+        get_vote_of_sender,
+        Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))),
+        If (
+            get_vote_of_sender.hasValue(), 
+            App.globalPut(
+                    Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value())),
+                    App.globalGet(Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value()))) - Int(1),
+            )
+        ), 
+        Return(Int(1))
         ]
     )
 
