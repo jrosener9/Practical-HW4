@@ -46,14 +46,16 @@ def approval_program():
 
     on_closeout = Seq(
         # TODO: CLOSE OUT:
-        [
+       [
         get_vote_of_sender,
-        Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
-        Assert(get_vote_of_sender.hasValue()), 
-        App.globalPut(
+        Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))),
+        If (
+            get_vote_of_sender.hasValue(), 
+            App.globalPut(
                     Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value())),
                     App.globalGet(Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value()))) - Int(1),
-        ),
+            )
+        ), 
         Return(Int(1))
         ]
     )
