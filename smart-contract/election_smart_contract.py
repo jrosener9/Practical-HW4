@@ -48,9 +48,8 @@ def approval_program():
         # TODO: CLOSE OUT:
        [
         get_vote_of_sender,
-        Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))),
         If (
-            get_vote_of_sender.hasValue(), 
+            And(Global.round() <= App.globalGet(Bytes("ElectionEnd")), get_vote_of_sender.hasValue()), 
             App.globalPut(
                     Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value())),
                     App.globalGet(Concat(Bytes("VotesFor"), itoa(get_vote_of_sender.value()))) - Int(1),
