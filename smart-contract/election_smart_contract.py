@@ -71,7 +71,6 @@ def approval_program():
         [   
             Assert(is_creator), 
             Assert(Global.round() <= App.globalGet(Bytes("ElectionEnd"))), 
-            #Assert(App.localGetEx(Txn.application_args[1], App.id(), Bytes("can_vote")).hasValue()),
             App.localPut(Txn.application_args[1], Bytes('can_vote'), Txn.application_args[2]),
             Return(Int(1))
         ]
